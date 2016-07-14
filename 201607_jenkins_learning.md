@@ -237,6 +237,17 @@ PS. 需注意，所有的值需要適當的 XML Escape 處理。
 java -jar jenkins-cli.jar -s http://127.0.0.1:1234/ build another-freestyle-job
 ```
 
+## 關於證認
+
+在先前的呼叫中，有出現下列警告：
+
+```
+[WARN] Failed to authenticate with your SSH keys. Proceeding as anonymous
+```
+
+有些版本的檢查比較嚴格，只能讓 SSH Keys 認證的使用者執行指令，請至使用者管理頁，替使用者加上 public key 以便驗證。
+
+
 ## 使用 Jenkins 初心得
 
 重新整理了 jenkins cli 操作方式後，終於能放心地使用 jenkins 了！這一切都是為 **infrastructure as code**，只要能自動化的部分『絕不出手處理』。未來正式進入 jenkins 大量支援 pipeline 後，就能讓 **infrastructure as code** 的拼圖更加完整。
