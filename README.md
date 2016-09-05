@@ -5,6 +5,7 @@
 * 2016/04/15 [包裝 Gradle Plugin 的 Plugin](201604_gradle_plugin_wrapper.md)
 * 2016/04/18 [實作 gradle-aws-plugin Lambda Wrapper](201604_gradle_wrapper_gradle_aws_plugin.md)
 * 2016/04/23 [Gradle 整合測試](201604_gradle_testcase.md)
+* 2016/05/13 [X-Forwarded-For](201605_x_forwarded_for.md)
 * 2016/07/01 [Jenkins 初學筆記](201607_jenkins_learning.md)
 
 ## 文章
