@@ -7,6 +7,7 @@
 * 2016/04/23 [Gradle 整合測試](201604_gradle_testcase.md)
 * 2016/05/13 [X-Forwarded-For](201605_x_forwarded_for.md)
 * 2016/07/01 [Jenkins 初學筆記](201607_jenkins_learning.md)
+* 2016/09/30 [呼叫 Google API 筆記](201609_google_api_java_client.md)
 
 ## 文章
 

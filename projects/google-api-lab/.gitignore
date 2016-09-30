@@ -1,0 +1,7 @@
+.classpath
+.gradle
+.project
+.settings
+bin
+build
+src/main/java/com/github/byogc4j/Main.java
