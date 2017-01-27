@@ -8,6 +8,7 @@
 * 2016/05/13 [X-Forwarded-For](201605_x_forwarded_for.md)
 * 2016/07/01 [Jenkins 初學筆記](201607_jenkins_learning.md)
 * 2016/09/30 [呼叫 Google API 筆記](201609_google_api_java_client.md)
+* 2017/01/27 [製作 Anki FlashCard 包](20170127_anki_flashcard/making_anki_flashcard.md)
 
 ## 文章
 
