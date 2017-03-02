@@ -10,6 +10,7 @@
 * 2016/09/30 [呼叫 Google API 筆記](201609_google_api_java_client.md)
 * 2017/01/27 [製作 Anki FlashCard 包](20170127_anki_flashcard/making_anki_flashcard.md)
 * 2017/02/19 [OSX 執行檔 image not found](20170219_osx_otool_install_name_tool.md)
+* 2017/03/02 [AWS Elastic Transcoder CLI 搭配 jq 製作 preset](20170302_aws_transcoder.md)
 
 ## 文章
 
