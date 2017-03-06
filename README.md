@@ -11,6 +11,7 @@
 * 2017/01/27 [製作 Anki FlashCard 包](20170127_anki_flashcard/making_anki_flashcard.md)
 * 2017/02/19 [OSX 執行檔 image not found](20170219_osx_otool_install_name_tool.md)
 * 2017/03/02 [AWS Elastic Transcoder CLI 搭配 jq 製作 preset](20170302_aws_transcoder.md)
+* 2017/03/06 [Jenkins Workflow Library 設定筆記](20170306_jenkins_workflowlibs_settings.md)
 
 ## 文章
 
