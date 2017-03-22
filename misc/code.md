@@ -1,3 +1,15 @@
+
+### jq 製作 ansible inventory
+
+用 jq 來生 gce 的 ansible inventory
+
+```
+#!/bin/env sh
+gcloud compute instances list  --regexp .*bott.* --format json \
+    | jq '{"bott":{"vars": {"ansible_ssh_user":"my", "ansible_ssh_private_key_file":"/home/bott/.ssh/my.pem"}, "hosts": [.[].networkInterfaces[].accessConfigs[].natIP]}}'
+exit 0
+```
+
 ### AWS Lmabda AMI
 
 查 `ap-northeast-1` 的 Lambda Image Id
