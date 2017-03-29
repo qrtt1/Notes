@@ -42,7 +42,6 @@ qty:lab qrtt1$
 這些就是平常在使用的 `apply plugin: ""` 內所填的值，檔案內容就是它的實作類別，例如：
 
 ```
-qty:lab qrtt1$ cat android-plugin/META-INF/gradle-plugins/com.android.application.properties
-implementation-class=com.android.build.gradle.AppPluginqty:lab qrtt1$ cat android-plugin/META-INF/gradle-plugins/com.android.application.properties ; echo;
+qrtt1$ cat android-plugin/META-INF/gradle-plugins/com.android.application.properties ; echo;
 implementation-class=com.android.build.gradle.AppPlugin
 ```
