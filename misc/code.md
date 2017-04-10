@@ -49,3 +49,34 @@ platform-base/org/gradle/platform/base/internal/registry/ComponentModelRuleDefin
 platform-base/org/gradle/platform/base/internal/registry/ComponentModelRuleDefinitionHandler.java:            inputs = ImmutableList.<ModelReference<?>>of(ModelReference.of(ProjectIdentifier.class));
 qty:src qrtt1$
 ```
+
+### AWS iam-roles
+
+* [Delegating API Access to AWS Services Using IAM Roles](https://aws.amazon.com/tw/blogs/aws/delegating-api-access-to-aws-services-using-iam-roles/)
+* [kaif: 原來 aws java sdk 已經有自動 renew AssumeRoleSession 的功能](https://kaif.io/z/programming/debates/eMepQ4JKw1)
+
+```
+心血來潮想在新專案使用 STS 的 assumeRole，翻了一下手冊相關的教學 Making Requests Using IAM User Temporary Credentials - AWS SDK for Java1 看起來動作都挺「手工」的，這樣還要另外開一個 TimerTask 來更新 session，於是立馬動手寫了個簡單的版本 STSAssumeRoleAWSCredentialsProvider2，弄好後看起來運作大致正常，想回 aws java sdk 的 github 問看看能不能整合，就發現原來已經一模一樣的東西了 !!!
+
+因為曾有人發 bug report STSAssumeRoleSessionCredentialsProvider does not support passing an external id3 順便這名，找到了它： STSAssumeRoleSessionCredentialsProvider4。一週的第一天，就在浪費青春了。
+
+所以，該發另一個 bug 去靠北手冊太舊了 orz
+
+1. http://docs.aws.amazon.com/AmazonS3/latest/dev/AuthUsingTempSessionTokenJava.html
+2. https://gist.github.com/qrtt1/d6046802f5bb10630aa9
+3. https://github.com/aws/aws-sdk-java/issues/290
+4. https://github.com/aws/aws-sdk-java/blob/master/aws-java-sdk-sts/src/main/java/com/amazonaws/auth/STSAssumeRoleSessionCredentialsProvider.java
+```
+
+### AWSCredentialsProviderChain
+
+[kaif: How a bug in Visual Studio 2015 exposed my source code on GitHub and cost me $6,500 in a few hours](https://kaif.io/z/compiling/debates/gGmBnjUmoT)
+
+```java
+AWSCredentialsProvider provider = new AWSCredentialsProviderChain(
+  new ProfileCredentialsProvider("devProfile"),
+  new EnvironmentVariableCredentialsProvider(), 
+  new SystemPropertiesCredentialsProvider(),
+  new ProfileCredentialsProvider(), 
+  new InstanceProfileCredentialsProvider());
+```
