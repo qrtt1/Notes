@@ -6,26 +6,33 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MP4Parser {
 
-    public MP4Parser(InputStream inputStream) {
+    List<Box> boxes = new ArrayList<>();
+
+    public void parse(InputStream inputStream, Box parent) {
+        long offset = 0;
         while (true) {
-            Box box = readBox(inputStream);
+            Box box = readBox(inputStream, parent);
             if (box == null) {
                 break;
             }
-            System.err.println(box);
-            try {
-                inputStream.skip(box.size);
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+            box.start = offset;
+            box.end = box.start + box.size;
+            offset += box.size;
+            boxes.add(box);
+            if (box.hasChildren()) {
+                parse(inputStream, box);
             }
+
+            System.out.println(box);
         }
     }
 
-    public Box readBox(InputStream inputStream) {
+    private Box readBox(InputStream inputStream, Box parent) {
         byte[] size = new byte[4];
         byte[] type = new byte[4];
         try {
@@ -36,8 +43,13 @@ public class MP4Parser {
             }
 
             Box box = new Box();
+            box.parent = parent;
             box.size = uint32beToInt(size, 0);
             box.type = new String(type);
+
+            if (!box.hasChildren()) {
+                inputStream.skip(box.size - 8);
+            }
             return box;
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -52,7 +64,9 @@ public class MP4Parser {
 
     public static void main(String[] args) throws FileNotFoundException, IOException {
         try (InputStream input = new FileInputStream("/Users/qrtt1/Desktop/sample.mp4")) {
-            MP4Parser mp4Parser = new MP4Parser(input);
+            // input.skip(2237327872L);
+            MP4Parser mp4Parser = new MP4Parser();
+            mp4Parser.parse(input, null);
         }
     }
 }
