@@ -152,7 +152,7 @@ hudson.model.Hudson@3a66b14d
 
 #### 執行 unlock functoin
 
-這裡直接使用 [provision_jenkins.sh] (https://github.com/samrocketman/jenkins-bootstrap-shared/blob/bb2147f2d051396a60bc81eca9b7374b3dbe0ea4/scripts/provision_jenkins.sh#L69) 內的 function：
+這裡直接使用 [provision_jenkins.sh](https://github.com/samrocketman/jenkins-bootstrap-shared/blob/bb2147f2d051396a60bc81eca9b7374b3dbe0ea4/scripts/provision_jenkins.sh#L69) 內的 function：
 
 ```shell
 function script_skip_wizard() {
