@@ -14,6 +14,7 @@
 * 2017/03/06 [Jenkins Workflow Library 設定筆記](20170306_jenkins_workflowlibs_settings.md)
 * 2017/03/12 [Android 讀書會：MultipleFlavor 實作思路](20170312_android.multi.flavors.md)
 * 2017/03/12 [Gradle Rule Based Configuration API 記筆](20170312_gradle.rule.source.plugin.md)
+* 2017/10/27 [Jenkins World 2017: Mastering the Jenkins Script Console 觀後筆記](20171027_jenkins_scripting/JenkinsConfigurationAsCode.md)
 
 ## 文章
 
