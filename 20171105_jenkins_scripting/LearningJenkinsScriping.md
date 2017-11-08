@@ -13,7 +13,7 @@ println(Jenkins.instance.pluginManager.plugins)
 
 ## 觀察原始碼與 Web UI
 
-於是下載了 Jenkins 的原始碼回來研究一下，發現檔案有點多。而且使用一種先前沒使用過竹旳 Web Framework：[Stapler](http://stapler.kohsuke.org/)，依官網的副標它是：
+於是下載了 Jenkins 的原始碼回來研究一下，發現檔案有點多。而且使用一種先前沒使用過的 Web Framework：[Stapler](http://stapler.kohsuke.org/)，依官網的副標它是：
 
 >> Stapler HTTP request handling engine
 
