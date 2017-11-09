@@ -323,3 +323,5 @@ qty:~ qrtt1$
 ## 結語
 
 雖然，我們沒有真正掌握 Jenkins Web UI 的技術，但至少能開始 trace 原始碼，並獲得有用的資訊了。（雖然，過程累了點），但都找到方法後可以直接用 Jenkins Script 做出各式各樣的設定變更。
+
+PS. 其它範例可見 [Recipe](Recipe.md)
