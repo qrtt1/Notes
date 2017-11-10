@@ -324,4 +324,9 @@ qty:~ qrtt1$
 
 雖然，我們沒有真正掌握 Jenkins Web UI 的技術，但至少能開始 trace 原始碼，並獲得有用的資訊了。（雖然，過程累了點），但都找到方法後可以直接用 Jenkins Script 做出各式各樣的設定變更。
 
-PS. 其它範例可見 [Recipe](Recipe.md)
+當我們知道如何挖掘出需要的 Groovy Script 後，就可以把它用來：
+
+* Jenkins Provision：當你裝好一個全新的 Jenkins 時，總會需要有些『人工』設定的部分，可以把它用在 [Post-initialization script](https://wiki.jenkins.io/display/JENKINS/Post-initialization+script)，也就是 `$JENKINS_HOME/init.groovy` 或是任何 `$JENKINS_HOME/init.groovy.d/` 目錄下的 `.groovy` 檔。讓它幫你完成人工需要設定的內容。
+* 利用 Script 進行大量操作，像是大量新增 slave 或幫 Job 改名字。
+
+各種應用都算是挺便利的，未來相關的 Script 會蒐集在 [Recipe](Recipe.md) 頁面。
