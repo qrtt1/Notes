@@ -16,6 +16,7 @@
 * 2017/03/12 [Gradle Rule Based Configuration API 記筆](20170312_gradle.rule.source.plugin.md)
 * 2017/10/27 [Jenkins World 2017: Mastering the Jenkins Script Console 觀後筆記](20171027_jenkins_scripting/JenkinsConfigurationAsCode.md)
 * 2017/11/05 [由 Web UI 探索 Jenkins Scripting 對應的實作](20171105_jenkins_scripting/LearningJenkinsScriping.md)
+* 2018/01/27 [新的 side project：實作 maven-cache gradle plugin](20180127_gradle_maven_cache.md)
 
 ## 文章
 
