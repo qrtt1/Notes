@@ -10,7 +10,7 @@
 
 ```
 mkdir -p data
-docker run -it --rm -v `pwd`/data:/data -w /data python:3 pip install pandas -t /data
+docker run -it --rm -v `pwd`/data:/data -w /data python:3.6 pip install pandas -t /data
 ```
 
 上面的指令其實就是，建立一個 data 資料夾，並在 docker 啟動時 mount 進去而已。再指定 pip 要裝到 data 資料夾內，執行完後你可以發現它抓的版本就是給 linux 使用的:
@@ -31,14 +31,14 @@ qty:data qrtt1$ find . -name "*.so" |head
 
 總大小其實蠻巨大的，要注意一下它不可以超過 [AWS Lambda Limits](https://docs.aws.amazon.com/lambda/latest/dg/limits.html) 的限制：
 
-![](images/aws_limits.png)
+![](aws_limits.png)
 
 ```
 qty:data qrtt1$ du -h -s
 170M    .
 ```
 
-## 超出限制怎麼辦
+### 超出限制怎麼辦
 
 若是 zip 檔超過限制，時則有另一招可以用來 work around：
 
@@ -160,7 +160,72 @@ END RequestId: 75f55322-2bef-11e8-823a-fb6239c1b277
 REPORT RequestId: 75f55322-2bef-11e8-823a-fb6239c1b277	Duration: 34092.77 ms	Billed Duration: 34100 ms 	Memory Size: 128 MB	Max Memory Used: 128 MB	
 ```
 
-## Work Around 應用建議
+### Work Around 應用建議
 
 * 由於解壓縮的時間會很久，最好是能避勉使用 Work Around
 * 若真的需要 Work Around，那僅將超出的範圍使用 Work Around 以獲得最佳的啟動速度
+
+## Code Build 與 Lambda
+
+隨著 AWS 提供越來越多好用的功能，蠻多開發者漸漸將 CI/DI 環境搬上 AWS 上，像是
+
+* 將原程碼放入 codecommit
+* 啟用 codepipeline 來管理 CI/CD
+* 使用 codebuild 編譯，打包，測試
+* 透過 codedeploy 部署服務
+
+若是你的 python 應用程式，有用到 native library 對好是要能配得上 python 的 minor version (特別是透過 cpython 提昇效的)。例如下列版本對 native library 是有差異的：
+
+* python 3.4
+* python 3.5
+* python 3.6
+* python 3.7
+
+舉例來說，若是在 docker python:3.5 與 python:3.6 下進行 pip install，你會得到不同預編版本的 .so：
+
+```
+./pandas/_libs/json.cpython-35m-x86_64-linux-gnu.so
+```
+```
+./pandas/_libs/json.cpython-36m-x86_64-linux-gnu.so
+```
+
+它們需要對應的版本才能使用，其中 `35m` 就是代表 python `3.5`；`36m` 就是 `3.6`。以撰文的時間來說，目前 codebuild 提供的 aws managed docker image 最高支援到 `3.5`：
+
+![](codebuild-python.png)
+
+而 aws lambda 目前支援的最高版本為 `3.6`：
+
+![](awslambda-python.png)
+
+考慮下列情境：
+
+* 在 codebuild 打包 lambda 用的 python package 給 lambda 用
+* 在 codebuild 內使用 pip install 安裝相關的 native library
+
+都選擇內建最新的 python 支援版，那就會變成包了 3.5 的 native library 給 3.6 使用。最後，在 lambda invocation 時發生了 import error。
+
+### 確保 Python 版本一致
+
+要解決版本不一致而發生的問題，有幾個選項：
+
+1. 使用 codebuild 與 lambda 都有的 2.7 版 (這不推薦，因為大方向是朝 3.x 版前進)
+1. 讓 codebuild 吃開發者預包的 docker image 提供與 aws lambda 對應版本的 Python
+1. pip install 的動作，不要在 codebuild 上執行，而是預包好，在 codebuild 時下載回來使用而已
+
+後二者是比較推薦的方案，而提供客製的 docker image 的優點就是，能在 codebuild 環境下編譯，打包，測試。缺點是得自己維護 docker image。
+
+另一個方案是預包 Library，在 codebuild 內只是將它合併起來。舉例來說，我能在 s3 上先準備好 native library：
+
+```
+Pandas_cpython-36m-x86_64-linux.zip
+```
+
+在 codebuild 時，將它下載回來，並將需要包進去的檔案，透過 zip 指令附加進去：
+
+```
+zip -u Pandas_cpython-36m-x86_64-linux.zip a.py b.py …
+```
+
+這麼做是省下 pip 的時間，但缺點就是無法在 codebuild 內跑測試，因為 python 版本對不上。但也能透過在 codebuild 的過程中，建立臨時的 lambda function 部署上去，跑一次整合測試來達成目標。
+
