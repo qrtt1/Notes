@@ -9,43 +9,57 @@ const delay = (time) => {
 // read login data {email, password}
 var login_data = JSON.parse(fs.readFileSync(process.argv[2], 'utf8'));
 
+var email = login_data['email'] || "";
+var password = login_data['password'] || "";
+var dev_mode = login_data['dev_mode'] || false;
 
 (async () => {
   const browser = await puppeteer.launch({
-    ignoreHTTPSErrors: true
+    ignoreHTTPSErrors: true,
+    headless: !dev_mode,
+    devtools: dev_mode
   });
+
   const page = await browser.newPage();
   await page.setViewport({ width: 1366, height: 768 });
   await page.goto('https://getsupport.apple.com/?caller=grl&locale=zh_TW');
 
-  let mac_product_selector = '#aw-page-wrapper > div.ng-scope > div > div.page-container.cas1._page-cas1 > div.page-body > div.awanimateclass5.ng-scope > div > div.ng-scope > div.ng-scope > div > ul > li:nth-child(1) > div > button > div > div > div.button-content-desc > span';
-  await page.waitForSelector(mac_product_selector);
-  await delay(1 * 1000);
-  await page.click(mac_product_selector);
-  await delay(1 * 1000);
+  await page.waitForSelector('span[aw-resource="Mac"]');
+  await page.click('span[aw-resource="Mac"]');
 
-  let power_situation_selector = '#aw-page-wrapper > div.ng-scope > div > div.page-container.cas2._page-cas2 > div.page-body > div.awanimateclass5.ng-scope > div > div > div > div:nth-child(3) > ul > li:nth-child(1) > div > button';
-  await page.waitForSelector(power_situation_selector);
-  await delay(1 * 1000);
-  await page.click(power_situation_selector);
-  await delay(1 * 1000);
+  await page.waitForSelector('span[aw-resource="啟動或電源"]');
+  await page.click('span[aw-resource="啟動或電源"]');
 
-  let genius_bar_selector = '#aw-page-wrapper > div.ng-scope > div > div.page-container.cas3._page-cas3 > div.page-body > div.awanimateclass5.ng-scope > div > div > div.container > ul > li:nth-child(3) > div > button';
-  await page.waitForSelector(genius_bar_selector);
-  await delay(1 * 1000);
-  await page.click(genius_bar_selector);
-  await delay(5 * 1000);
-  await page.keyboard.type(login_data['email']);
+  await page.waitForSelector('span[aw-resource="親自送修"]');
+  await page.click('span[aw-resource="親自送修"]');
+  console.log('wait for login page');
+  try {
+    await page.waitForNavigation({waitUntil: "networkidle0"});  
+  } catch (error) {
+    console.error(error);
+    await page.screenshot({ path: 'error.png' });
+    await browser.close();
+    return ;
+  }
+  
+  // 登入頁的 selector 都抓不太到
+  // 直接用 keyboard 處理唄
+  console.log('start to login');
+  await page.keyboard.type(email);
   await page.keyboard.press('Enter');
-  await delay(2 * 1000);
-  await page.keyboard.type(login_data['password']);
+  await delay(1000);
+  await page.keyboard.type(password);
   await page.keyboard.press('Enter');
-  await delay(5 * 1000);
+  await page.waitForNavigation({waitUntil: "networkidle0"});
+  
+  // 輸入目前所在位置
+  console.log('input location');
+  await page.waitForSelector('input[placeholder="目前所在位置"]');
   await page.keyboard.press('Tab');
   await page.keyboard.type('台北 101');
   await page.keyboard.press('Enter');
-  await delay(5 * 1000);
-
+  await page.waitForSelector('input[class="store-item"]');
+  
   let texts = await page.evaluate(() => {
     let data = [];
     let elements = document.getElementsByClassName('store-details');
