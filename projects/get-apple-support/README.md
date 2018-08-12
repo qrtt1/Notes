@@ -10,7 +10,7 @@ npm install puppeteer
 
 ## Usage
 
-You would need a apple id to login:
+You would need an apple id to login:
 
 ```json
 {"email": "email for your apple id", "password": "password for your apple id"}
