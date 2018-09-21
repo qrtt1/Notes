@@ -229,3 +229,8 @@ zip -u Pandas_cpython-36m-x86_64-linux.zip a.py b.py …
 
 這麼做是省下 pip 的時間，但缺點就是無法在 codebuild 內跑測試，因為 python 版本對不上。但也能透過在 codebuild 的過程中，建立臨時的 lambda function 部署上去，跑一次整合測試來達成目標。
 
+## Updated
+
+* 2018.09.21 review 了一下 code build 支援的 runtime，它已經支援 Python 3.6 版本
+
+![](review.png)
