@@ -20,6 +20,7 @@
 * 2018/03/18 [AWS Lambda 與 Python 應用程式](20180318_aws_lambda_python/20180318_aws_lambda_python.md)
 * 2018/03/31 [NLP: matrix67 演算法的 POC](20180331_matrix67_poc/NLP_LAB.ipynb)
 * 2018/07/06 [Java 的 package, import 與 classpath](20180706_learning_java_package_import/README.md)
+* 2018/11/10 [SpringOne Tour 2018 北京 閱讀筆記](20181110_springone_tour.md)
 
 ## 文章
 
