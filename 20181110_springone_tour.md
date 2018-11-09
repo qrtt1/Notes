@@ -4,8 +4,12 @@
 
 Josh 不仅介绍了云原生 Java，同时深入介绍了 Spring Cloud 对现代微服务开发的支持，重点关注真正重要的功能以及我们已经着手在 Spring Boot 2.0 和 Spring Cloud Finchley 中实现的功能。
 
-投影片：http://icampaign.com.cn/pivotal/SpringOne_Tour/Josh.pdf
-演講影片：https://v.qq.com/x/page/k0782bocg8j.html
+### 閱讀材料
+
+* 投影片：http://icampaign.com.cn/pivotal/SpringOne_Tour/Josh.pdf
+* 演講影片：https://v.qq.com/x/page/k0782bocg8j.html
+
+### 影片筆記
 
 * Cloud Native Java
   * {06:50 ~ 12:10} 使用 start.spring.io 建立 reservation 專案，相關功能如下： 
