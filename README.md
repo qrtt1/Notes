@@ -21,6 +21,7 @@
 * 2018/03/31 [NLP: matrix67 演算法的 POC](20180331_matrix67_poc/NLP_LAB.ipynb)
 * 2018/07/06 [Java 的 package, import 與 classpath](20180706_learning_java_package_import/README.md)
 * 2018/11/10 [SpringOne Tour 2018 北京 閱讀筆記](20181110_springone_tour.md)
+* 2019/01/21 [利用 Google API 的 Service Discovery 查詢沒在文件上的 API](20190121_google_api_discovery.md)
 
 ## 文章
 
