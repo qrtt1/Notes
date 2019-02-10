@@ -23,6 +23,7 @@
 * 2018/11/10 [SpringOne Tour 2018 北京 閱讀筆記](20181110_springone_tour.md)
 * 2019/01/21 [利用 Google API 的 Service Discovery 查詢沒在文件上的 API](20190121_google_api_discovery.md)
 * 2019/01/27 [On Job Training 有感](20190127_OnJobTraining.md)
+* 2019/02/06 [The Little Go Book 閱讀筆記](20190206_golang/README.md)
 
 ## 文章
 
