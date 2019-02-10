@@ -480,7 +480,7 @@ func init() {
 }
 ```
 
-當我們寫下 import 時，它完成了 postgres driver 的註冊：
+當程式執行到 import 時，它就會完成 postgres driver 的註冊：
 
 ```go
 import (
@@ -496,3 +496,8 @@ import (
 這章介紹的 interface 用法很平常，但在第 5 章的 `Empty Interface and Conversions` 看到偽 overloading 的希望。
 
 
+## 後續的章節
+
+在書中最後二章，第 5 章是講一些各種小東西的用法，例如 `defer`，第 6 章是講 concurrency。看了一下內容，差不多是該換點學習材料了。跟 concurrency 有關的部分，在 golang 官網的 wiki 有豐富的整理呦。
+
+* [LearnConcurrency](https://github.com/golang/go/wiki/LearnConcurrency)
