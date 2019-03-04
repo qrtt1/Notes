@@ -301,7 +301,7 @@ start_apiserver 是一個很長的函式，瞄了一下大致分為 3 個部分�
 * 啟動 api server
 * 啟動後的配置
 
-apiserver 的參數實在有多，到得再挖 [source code]((https://github.com/kubernetes/kubernetes/blob/release-1.14/cmd/hyperkube/main.go#L90)) 研究了。
+apiserver 的參數實在有多，到得再挖 [source code](https://github.com/kubernetes/kubernetes/blob/release-1.14/cmd/hyperkube/main.go#L90) 研究了。
 
 ```bash
 function start_apiserver {
