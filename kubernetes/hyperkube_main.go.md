@@ -557,3 +557,259 @@ func (s *ProxyServer) birthCry() {
 
 目前看起來可以推測 Recorder 能用來發 event 而 informers 能用來收 event。
 
+## scheduler
+
+經過前的探索後，對於它的寫法有些熟悉感了，在 kubescheduler package 下能找得到 [NewSchedulerCommand 函式](https://github.com/kubernetes/kubernetes/blob/release-1.14/cmd/kube-scheduler/app/server.go#L62-L106)
+
+```go
+scheduler := func() *cobra.Command {
+    ret := kubescheduler.NewSchedulerCommand()
+    // add back some unfortunate aliases that should be removed
+    ret.Aliases = []string{"scheduler"}
+    return ret
+}
+```
+
+同樣的 trace 流程，我們可以略過 Command 本身的 Run callback 找到它派委的對象 [Run 函式](https://github.com/kubernetes/kubernetes/blob/release-1.14/cmd/kube-scheduler/app/server.go#L159)。
+
+在最開頭有個超巨大的 *New 方法*，塞了超多 informer 跟一堆參數：
+
+```go
+// Create the scheduler.
+sched, err := scheduler.New(cc.Client,
+    cc.InformerFactory.Core().V1().Nodes(),
+    cc.PodInformer,
+    cc.InformerFactory.Core().V1().PersistentVolumes(),
+    cc.InformerFactory.Core().V1().PersistentVolumeClaims(),
+    cc.InformerFactory.Core().V1().ReplicationControllers(),
+    cc.InformerFactory.Apps().V1().ReplicaSets(),
+    cc.InformerFactory.Apps().V1().StatefulSets(),
+    cc.InformerFactory.Core().V1().Services(),
+    cc.InformerFactory.Policy().V1beta1().PodDisruptionBudgets(),
+    cc.InformerFactory.Storage().V1().StorageClasses(),
+    cc.Recorder,
+    cc.ComponentConfig.AlgorithmSource,
+    stopCh,
+    scheduler.WithName(cc.ComponentConfig.SchedulerName),
+    scheduler.WithHardPodAffinitySymmetricWeight(cc.ComponentConfig.HardPodAffinitySymmetricWeight),
+    scheduler.WithPreemptionDisabled(cc.ComponentConfig.DisablePreemption),
+    scheduler.WithPercentageOfNodesToScore(cc.ComponentConfig.PercentageOfNodesToScore),
+    scheduler.WithBindTimeoutSeconds(*cc.ComponentConfig.BindTimeoutSeconds))
+if err != nil {
+    return err
+```
+
+實際可以執行時是呼叫 run callback (它同樣也是要通過 leader election 才會執行到)：
+
+```go
+run := func(ctx context.Context) {
+    sched.Run()
+    <-ctx.Done()
+}
+```
+
+所以，要知道 scheduler 在忙什麼，我們得看一下它的 [Run 方法](https://github.com/kubernetes/kubernetes/blob/release-1.14/pkg/scheduler/scheduler.go#L248) 才行了。
+
+```go
+// Run begins watching and scheduling. It waits for cache to be synced, then starts a goroutine and returns immediately.
+func (sched *Scheduler) Run() {
+	if !sched.config.WaitForCacheSync() {
+		return
+	}
+
+	go wait.Until(sched.scheduleOne, 0, sched.config.StopEverything)
+}
+```
+
+看起來是會一直呼叫 callback [scheduleOne](https://github.com/kubernetes/kubernetes/blob/release-1.14/pkg/scheduler/scheduler.go#L434)：
+
+```go
+// scheduleOne does the entire scheduling workflow for a single pod.  It is serialized on the scheduling algorithm's host fitting.
+func (sched *Scheduler) scheduleOne() {
+	plugins := sched.config.PluginSet
+	// Remove all plugin context data at the beginning of a scheduling cycle.
+	if plugins.Data().Ctx != nil {
+		plugins.Data().Ctx.Reset()
+	}
+```
+在一開始，先重設 plugins 的 context data (目前還不知道 plugin 是做什麼用的)
+
+```go
+	pod := sched.config.NextPod()
+	// pod could be nil when schedulerQueue is closed
+	if pod == nil {
+		return
+	}
+	if pod.DeletionTimestamp != nil {
+		sched.config.Recorder.Eventf(pod, v1.EventTypeWarning, "FailedScheduling", "skip schedule deleting pod: %v/%v", pod.Namespace, pod.Name)
+		klog.V(3).Infof("Skip schedule deleting pod: %v/%v", pod.Namespace, pod.Name)
+		return
+	}
+```
+
+透過 `.NextPod()` 取得下一個需要調度的 schedule
+
+```go
+	klog.V(3).Infof("Attempting to schedule pod: %v/%v", pod.Namespace, pod.Name)
+
+	// Synchronously attempt to find a fit for the pod.
+	start := time.Now()
+    scheduleResult, err := sched.schedule(pod)
+```
+
+透過 *schedule 方法* 來調度 pod，如果有錯過則做：
+
+```go
+	if err != nil {
+		// schedule() may have failed because the pod would not fit on any host, so we try to
+		// preempt, with the expectation that the next time the pod is tried for scheduling it
+		// will fit due to the preemption. It is also possible that a different pod will schedule
+		// into the resources that were preempted, but this is harmless.
+		if fitError, ok := err.(*core.FitError); ok {
+			if !util.PodPriorityEnabled() || sched.config.DisablePreemption {
+				klog.V(3).Infof("Pod priority feature is not enabled or preemption is disabled by scheduler configuration." +
+					" No preemption is performed.")
+			} else {
+				preemptionStartTime := time.Now()
+				sched.preempt(pod, fitError)
+				metrics.PreemptionAttempts.Inc()
+				metrics.SchedulingAlgorithmPremptionEvaluationDuration.Observe(metrics.SinceInSeconds(preemptionStartTime))
+				metrics.DeprecatedSchedulingAlgorithmPremptionEvaluationDuration.Observe(metrics.SinceInMicroseconds(preemptionStartTime))
+				metrics.SchedulingLatency.WithLabelValues(metrics.PreemptionEvaluation).Observe(metrics.SinceInSeconds(preemptionStartTime))
+				metrics.DeprecatedSchedulingLatency.WithLabelValues(metrics.PreemptionEvaluation).Observe(metrics.SinceInSeconds(preemptionStartTime))
+			}
+			// Pod did not fit anywhere, so it is counted as a failure. If preemption
+			// succeeds, the pod should get counted as a success the next time we try to
+			// schedule it. (hopefully)
+			metrics.PodScheduleFailures.Inc()
+		} else {
+			klog.Errorf("error selecting node for pod: %v", err)
+			metrics.PodScheduleErrors.Inc()
+		}
+		return
+    }
+```
+
+如果調度成功了，那就繼續後續的處理：
+
+```go
+	metrics.SchedulingAlgorithmLatency.Observe(metrics.SinceInSeconds(start))
+	metrics.DeprecatedSchedulingAlgorithmLatency.Observe(metrics.SinceInMicroseconds(start))
+	// Tell the cache to assume that a pod now is running on a given node, even though it hasn't been bound yet.
+	// This allows us to keep scheduling without waiting on binding to occur.
+	assumedPod := pod.DeepCopy()
+
+	// Assume volumes first before assuming the pod.
+	//
+	// If all volumes are completely bound, then allBound is true and binding will be skipped.
+	//
+	// Otherwise, binding of volumes is started after the pod is assumed, but before pod binding.
+	//
+	// This function modifies 'assumedPod' if volume binding is required.
+	allBound, err := sched.assumeVolumes(assumedPod, scheduleResult.SuggestedHost)
+	if err != nil {
+		klog.Errorf("error assuming volumes: %v", err)
+		metrics.PodScheduleErrors.Inc()
+		return
+	}
+
+	// Run "reserve" plugins.
+	for _, pl := range plugins.ReservePlugins() {
+		if err := pl.Reserve(plugins, assumedPod, scheduleResult.SuggestedHost); err != nil {
+			klog.Errorf("error while running %v reserve plugin for pod %v: %v", pl.Name(), assumedPod.Name, err)
+			sched.recordSchedulingFailure(assumedPod, err, SchedulerError,
+				fmt.Sprintf("reserve plugin %v failed", pl.Name()))
+			metrics.PodScheduleErrors.Inc()
+			return
+		}
+    }
+```
+
+上面的 volumes 與 plugin 部分，還沒追進去看。接著透過 *assume 方法* 指定 node 名稱 (但還沒開始 binding node)
+
+```go
+	// assume modifies `assumedPod` by setting NodeName=scheduleResult.SuggestedHost
+	err = sched.assume(assumedPod, scheduleResult.SuggestedHost)
+	if err != nil {
+		klog.Errorf("error assuming pod: %v", err)
+		metrics.PodScheduleErrors.Inc()
+		return
+    }
+```
+
+真正的 binding node 是在 go runtine 內做：
+
+```go
+	// bind the pod to its host asynchronously (we can do this b/c of the assumption step above).
+	go func() {
+		// Bind volumes first before Pod
+		if !allBound {
+			err := sched.bindVolumes(assumedPod)
+			if err != nil {
+				klog.Errorf("error binding volumes: %v", err)
+				metrics.PodScheduleErrors.Inc()
+				return
+			}
+		}
+
+		// Run "prebind" plugins.
+		for _, pl := range plugins.PrebindPlugins() {
+			approved, err := pl.Prebind(plugins, assumedPod, scheduleResult.SuggestedHost)
+			if err != nil {
+				approved = false
+				klog.Errorf("error while running %v prebind plugin for pod %v: %v", pl.Name(), assumedPod.Name, err)
+				metrics.PodScheduleErrors.Inc()
+			}
+			if !approved {
+				sched.Cache().ForgetPod(assumedPod)
+				var reason string
+				if err == nil {
+					msg := fmt.Sprintf("prebind plugin %v rejected pod %v.", pl.Name(), assumedPod.Name)
+					klog.V(4).Infof(msg)
+					err = errors.New(msg)
+					reason = v1.PodReasonUnschedulable
+				} else {
+					reason = SchedulerError
+				}
+				sched.recordSchedulingFailure(assumedPod, err, reason, err.Error())
+				return
+			}
+		}
+
+		err := sched.bind(assumedPod, &v1.Binding{
+			ObjectMeta: metav1.ObjectMeta{Namespace: assumedPod.Namespace, Name: assumedPod.Name, UID: assumedPod.UID},
+			Target: v1.ObjectReference{
+				Kind: "Node",
+				Name: scheduleResult.SuggestedHost,
+			},
+		})
+		metrics.E2eSchedulingLatency.Observe(metrics.SinceInSeconds(start))
+		metrics.DeprecatedE2eSchedulingLatency.Observe(metrics.SinceInMicroseconds(start))
+		if err != nil {
+			klog.Errorf("error binding pod: %v", err)
+			metrics.PodScheduleErrors.Inc()
+		} else {
+			klog.V(2).Infof("pod %v/%v is bound successfully on node %v, %d nodes evaluated, %d nodes were found feasible", assumedPod.Namespace, assumedPod.Name, scheduleResult.SuggestedHost, scheduleResult.EvaluatedNodes, scheduleResult.FeasibleNodes)
+			metrics.PodScheduleSuccesses.Inc()
+		}
+	}()
+}
+```
+
+### schedule 演算法
+
+在 schedule 方法中，它會呼叫 `sched.config.Algorithm.Schedule` 來進行調度：
+
+```go
+// schedule implements the scheduling algorithm and returns the suggested result(host,
+// evaluated nodes number,feasible nodes number).
+func (sched *Scheduler) schedule(pod *v1.Pod) (core.ScheduleResult, error) {
+	result, err := sched.config.Algorithm.Schedule(pod, sched.config.NodeLister)
+	if err != nil {
+		pod = pod.DeepCopy()
+		sched.recordSchedulingFailure(pod, err, v1.PodReasonUnschedulable, err.Error())
+		return core.ScheduleResult{}, err
+	}
+	return result, err
+}
+```
