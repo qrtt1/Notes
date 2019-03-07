@@ -410,3 +410,150 @@ func NewControllerInitializers(loopMode ControllerLoopMode) map[string]InitFunc 
 ```
 
 雖然沒有完全理解 controller manager 如何運作 (leader election)，但看到上面的 map 應該有一種：『所有謎底都解開了的感覺』。那些在文件上看過得名稱，在這裡都出現了。
+
+## proxy
+
+proxy 是來自 kubeproxy package 的功能：
+
+```go
+proxy := func() *cobra.Command {
+    ret := kubeproxy.NewProxyCommand()
+    // add back some unfortunate aliases that should be removed
+    ret.Aliases = []string{"proxy"}
+    return ret
+}
+```
+
+[NewProxyCommand 函式](https://github.com/kubernetes/kubernetes/blob/release-1.14/cmd/kube-proxy/app/server.go#L441-L483) 內的重點如下：
+
+```go
+opts := NewOptions()
+
+cmd := &cobra.Command{
+    Use: "kube-proxy",
+    Long: `The Kubernetes network proxy runs on each node. This
+reflects services as defined in the Kubernetes API on each node and can do simple
+TCP, UDP, and SCTP stream forwarding or round robin TCP, UDP, and SCTP forwarding across a set of backends.
+Service cluster IPs and ports are currently found through Docker-links-compatible
+environment variables specifying ports opened by the service proxy. There is an optional
+addon that provides cluster DNS for these cluster IPs. The user must create a service
+with the apiserver API to configure the proxy.`,
+    Run: func(cmd *cobra.Command, args []string) {
+        verflag.PrintAndExitIfRequested()
+        utilflag.PrintFlags(cmd.Flags())
+
+        if err := initForOS(opts.WindowsService); err != nil {
+            klog.Fatalf("failed OS init: %v", err)
+        }
+
+        if err := opts.Complete(); err != nil {
+            klog.Fatalf("failed complete: %v", err)
+        }
+        if err := opts.Validate(args); err != nil {
+            klog.Fatalf("failed validate: %v", err)
+        }
+        klog.Fatal(opts.Run())
+    },
+}
+```
+
+將 Run 綁在 opts 雖然看起來不太直覺，但它就是這麼寫的啊！不過，整體的功能委派流程比 controller manager 簡單許多：
+
+```go
+func NewOptions() *Options {
+	return &Options{
+		config:      new(kubeproxyconfig.KubeProxyConfiguration),
+		healthzPort: ports.ProxyHealthzPort,
+		metricsPort: ports.ProxyStatusPort,
+		scheme:      scheme.Scheme,
+		codecs:      scheme.Codecs,
+		CleanupIPVS: true,
+		errCh:       make(chan error),
+	}
+}
+```
+```go
+func (o *Options) Run() error {
+	defer close(o.errCh)
+	if len(o.WriteConfigTo) > 0 {
+		return o.writeConfigFile()
+	}
+
+	proxyServer, err := NewProxyServer(o)
+	if err != nil {
+		return err
+	}
+	o.proxyServer = proxyServer
+	return o.runLoop()
+}
+```
+
+接著只要探索 [NewProxyServer 函式](https://github.com/kubernetes/kubernetes/blob/release-1.14/cmd/kube-proxy/app/server_others.go#L54-L284) 在做些什麼就行了，它其實會呼叫內部的 newProxyServer 函式，實作上是一個 factory method，它會依 proxyMode 去建立不同的 proxy server。實作上透過 *getProxyMode* 函式決定要建立哪一種 proxy：
+
+```go
+func getProxyMode(proxyMode string, iptver iptables.IPTablesVersioner, khandle ipvs.KernelHandler, ipsetver ipvs.IPSetVersioner, kcompat iptables.KernelCompatTester) string {
+	switch proxyMode {
+	case proxyModeUserspace:
+		return proxyModeUserspace
+	case proxyModeIPTables:
+		return tryIPTablesProxy(iptver, kcompat)
+	case proxyModeIPVS:
+		return tryIPVSProxy(iptver, khandle, ipsetver, kcompat)
+	}
+	klog.Warningf("Flag proxy-mode=%q unknown, assuming iptables proxy", proxyMode)
+	return tryIPTablesProxy(iptver, kcompat)
+}
+```
+
+proxy 元件的功能在於，如何反應使用者透過 kubectl 宣示目前要變更 service 狀態。所以 proxy 的實作得看得到這一塊的實作，在決定 proxy 之前，先建好了 recorder：
+
+```go
+	eventBroadcaster := record.NewBroadcaster()
+	recorder := eventBroadcaster.NewRecorder(scheme, v1.EventSource{Component: "kube-proxy", Host: hostname})
+```
+
+到各別 proxy 的初始化時，綁定 event handler，以 iptables 為例：
+
+```go
+serviceEventHandler = proxierIPTables
+endpointsEventHandler = proxierIPTables
+```
+
+在正式 [Run](https://github.com/kubernetes/kubernetes/blob/release-1.14/cmd/kube-proxy/app/server.go#L660-L677) 的時候，透過 informerFactory 綁定要接收的事件：
+
+```go
+informerFactory := informers.NewSharedInformerFactoryWithOptions(s.Client, s.ConfigSyncPeriod,
+    informers.WithTweakListOptions(func(options *v1meta.ListOptions) {
+        options.LabelSelector = "!" + apis.LabelServiceProxyName
+    }))
+    
+// Create configs (i.e. Watches for Services and Endpoints)
+// Note: RegisterHandler() calls need to happen before creation of Sources because sources
+// only notify on changes, and the initial update (on process start) may be lost if no handlers
+// are registered yet.
+serviceConfig := config.NewServiceConfig(informerFactory.Core().V1().Services(), s.ConfigSyncPeriod)
+serviceConfig.RegisterEventHandler(s.ServiceEventHandler)
+go serviceConfig.Run(wait.NeverStop)
+
+endpointsConfig := config.NewEndpointsConfig(informerFactory.Core().V1().Endpoints(), s.ConfigSyncPeriod)
+endpointsConfig.RegisterEventHandler(s.EndpointsEventHandler)
+go endpointsConfig.Run(wait.NeverStop)
+
+// This has to start after the calls to NewServiceConfig and NewEndpointsConfig because those
+// functions must configure their shared informer event handlers first.
+go informerFactory.Start(wait.NeverStop)
+
+// Birth Cry after the birth is successful
+s.birthCry()
+```
+
+其中 birthCry：
+
+```go
+func (s *ProxyServer) birthCry() {
+	s.Recorder.Eventf(s.NodeRef, api.EventTypeNormal, "Starting", "Starting kube-proxy.")
+}
+```
+
+目前看起來可以推測 Recorder 能用來發 event 而 informers 能用來收 event。
+
