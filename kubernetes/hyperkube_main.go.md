@@ -796,6 +796,9 @@ func (sched *Scheduler) scheduleOne() {
 }
 ```
 
+* 透過每 1 個 `plugins.PrebindPlugins()` 確認，是否能執行 binding。每 1 個都同意才會執行到 bind 的動作
+* sched.bind 會將 pod 與 node 綁定
+
 ### schedule 演算法
 
 在 schedule 方法中，它會呼叫 `sched.config.Algorithm.Schedule` 來進行調度：
