@@ -830,3 +830,57 @@ kubelet := func() *cobra.Command { return kubelet.NewKubeletCommand(stopCh) }
 實作委派給了 [run 函式](https://github.com/kubernetes/kubernetes/blob/release-1.14/cmd/kubelet/app/server.go#L479)
 
 (TBD)
+
+## cloudController
+
+```go
+cloudController := func() *cobra.Command { return cloudcontrollermanager.NewCloudControllerManagerCommand() }
+```
+
+在 cmd 內的實作如下：
+
+```go
+cmd := &cobra.Command{
+    Use: "cloud-controller-manager",
+    Long: `The Cloud controller manager is a daemon that embeds
+the cloud specific control loops shipped with Kubernetes.`,
+    Run: func(cmd *cobra.Command, args []string) {
+        verflag.PrintAndExitIfRequested()
+        utilflag.PrintFlags(cmd.Flags())
+
+        c, err := s.Config(KnownControllers(), ControllersDisabledByDefault.List())
+        if err != nil {
+            fmt.Fprintf(os.Stderr, "%v\n", err)
+            os.Exit(1)
+        }
+
+        if err := Run(c.Complete(), wait.NeverStop); err != nil {
+            fmt.Fprintf(os.Stderr, "%v\n", err)
+            os.Exit(1)
+        }
+
+    },
+}
+```
+
+我們關心一下針對 cloud 的部分，它有哪些是 known controllers
+
+```go
+// KnownControllers indicate the default controller we are known.
+func KnownControllers() []string {
+	ret := sets.StringKeySet(newControllerInitializers())
+	return ret.List()
+}
+
+// newControllerInitializers is a private map of named controller groups (you can start more than one in an init func)
+// paired to their initFunc.  This allows for structured downstream composition and subdivision.
+func newControllerInitializers() map[string]initFunc {
+	controllers := map[string]initFunc{}
+	controllers["cloud-node"] = startCloudNodeController
+	controllers["cloud-node-lifecycle"] = startCloudNodeLifecycleController
+	controllers["persistentvolume-binder"] = startPersistentVolumeLabelController
+	controllers["service"] = startServiceController
+	controllers["route"] = startRouteController
+	return controllers
+}
+```
