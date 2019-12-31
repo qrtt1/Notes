@@ -48,7 +48,7 @@ kubectl get cm my-config -o yaml > my-config.yaml
 
 ### 網路環境
 
-要擬刻出一個相近的網路環境，docker 就是個相關便利的環境了。況且，目前 kubernetes 的 container runtime 還是以 docker 為大宗，我們能利用 `docker network create` 的功能，建出需要的 subnet：
+為了重現看似一樣的網路環境，使用 docker 是最為直接且相關的選擇。畢竟，目前 kubernetes 的 container runtime 還是以 docker 為大宗，我們能利用 `docker network create` 的功能，建出需要的 subnet：
 
 ```
 $ docker network create --help
