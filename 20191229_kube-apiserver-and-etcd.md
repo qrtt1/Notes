@@ -41,7 +41,7 @@ kubectl get cm my-config -o yaml > my-config.yaml
 
 要達成這個目標，其實就是：
 
-* 建立出相同的網路環境 (IP 至少要許 certificate 內登記的相同)
+* 建立出相同的網路環境 (IP 至少要與 certificate 內記錄的相同)
 * 透過 ETCD Snapshot 建立出一組新的 ETCD Service (使用與原 cluster 一樣的 IP)
 * 啟動 kube-apiserver 並接上 ETCD Service (使用與原 cluster 一樣的 certificate)
 * kubectl 使用原 cluster 的 kubeconfig 進行操作
