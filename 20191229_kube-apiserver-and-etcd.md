@@ -353,7 +353,7 @@ PID    USER   TIME                                                              
                      --kubelet-client-key=/etc/kubernetes/ssl/kube-apiserver-key.pem --proxy-client-cert-file=/etc/kub
 ```
 
-接著取得原 cluster 的 KUBECONFIG (因為，我們並沒有特別將 kube-apiserver 放在原先的 IP，需將 server 位置改為 127.0.0.1，直接在 kube-api container 內使用)：
+接著取得原 cluster 的 KUBECONFIG，並做點小修改。因為，我們並沒有特別將 kube-apiserver 放在原先的 IP，需將 server 位置改為 127.0.0.1，直接在 kube-api container 內使用)：
 
 ```
 $ compose docker-compose exec kube-api bash
