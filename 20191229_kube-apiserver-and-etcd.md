@@ -9,7 +9,7 @@
 
 這些 CRUD 的動作，會反應在 kubernetes 的 key-value store 內，其實就是對 ETCD 進行操作。因此，我們使用 kubectl 進行各種 object 的修改，並不是直接去變更 kubernetes cluster 的狀態，而是向 kubernetes 宣告期望的狀態。因此，kubernetes object 的內容，其實是對於系統狀態的許願。
 
-那麼誰會去滿足這個願望呢？在 kubernetes 內有著各式各樣的 controller，不同的 controller 會關注不同的 kubernetes object 內容，並做出適當的反應來改變 cluster 的狀態，這其實就是個簡單的訂閱與通知的模型。為了實現這樣的模型，巧妙地運用了 ETCD 的 Watcher 獲得 object 更新的事件來及時反應期望狀態的改變。
+那麼誰會去滿足這個願望呢？在 kubernetes 內有著各式各樣的 controller，不同的 controller 會關注不同的 kubernetes object 內容，並做出適當的反應來改變 cluster 的狀態，這其實就是個簡單的訂閱與通知的模型。為了實現這樣的模型，巧妙地運用了 ETCD 的 Watcher 獲得 object 更新的事件來即時反應期望狀態的改變。
 
 ## Kubernetes Disaster Recovery
 
