@@ -1,15 +1,14 @@
-# Recovery Kubernetes Objects from ETCD
+# Restore Kubernetes Objects from ETCD
 
-相對於使用公有雲的 Kubernetes，維運 On-Premise Kubernetes 有著較多的的眉角。不過，自建的 Kubernetes 也有它獨特的優點，特別是能直接摸得到 ETCD 這件事，這也是為什麼值得寫一篇文章來分享的小技巧。
-
+相對於使用公有雲的 Kubernetes，維運 On-Premise Kubernetes 有著較多的的眉角。不過，自建的 Kubernetes 也有它獨特的優點，特別是能直接摸得到 [ETCD](https://etcd.io/) 這件事，這也是為什麼值得寫一篇文章來分享的小技巧。
 
 ## Kubernetes Objects 與它的 store
 
-維運 kubernetes cluster 時，最常用的指令為 kubectl。kubectl 其實就是個 HTTP Client，透過它來與 kubernetes 的 kube-apiserver 溝通。kube-apiserver 提供 HTTP 端點，接收 kubernetes object 的 CRUD 與各種的功能。
+維運 Kubernetes cluster 時，最常用的指令為 kubectl。kubectl其實就是個 HTTP Client，透過它來與 Kubernetes 的 kube-apiserver 溝通。kube-apiserver 提供 HTTP 端點，接收 Kubernetes object 的 CRUD 與各種的功能。
 
-這些 CRUD 的動作，會反應在 kubernetes 的 key-value store 內，其實就是對 ETCD 進行操作。因此，我們使用 kubectl 進行各種 object 的修改，並不是直接去變更 kubernetes cluster 的狀態，而是向 kubernetes 宣告期望的狀態。因此，kubernetes object 的內容，其實是對於系統狀態的許願。
+這些 CRUD 的動作，會反應在 Kubernetes 的 key-value store 內，其實就是對 ETCD 進行操作。因此，我們使用 `kubectl` 進行各種 object 的修改，並不是直接去變更 Kubernetes cluster 的狀態，而是向 Kubernetes 宣告期望的狀態。因此，Kubernetes object 的內容，其實是對於系統狀態的許願。
 
-那麼誰會去滿足這個願望呢？在 kubernetes 內有著各式各樣的 controller，不同的 controller 會關注不同的 kubernetes object 內容，並做出適當的反應來改變 cluster 的狀態，這其實就是個簡單的訂閱與通知的模型。為了實現這樣的模型，巧妙地運用了 ETCD 的 Watcher 獲得 object 更新的事件來即時反應期望狀態的改變。
+那麼誰會去滿足這個願望呢？在 Kubernetes 內有著各式各樣的 controller，不同的 controller 會關注不同的 Kubernetes object 內容，並做出適當的反應來改變 cluster 的狀態，這其實就是個簡單的訂閱與通知的模型。為了實現這樣的模型，巧妙地運用了 ETCD 的 Watcher 獲得 object 更新的事件來即時反應期望狀態的改變。
 
 ## Kubernetes Disaster Recovery
 
@@ -368,4 +367,4 @@ k8s03   Ready    worker                     4d21h   v1.15.3
 
 ## 最後的提醒
 
-針對自建 kubernetes 的情境，由 ETCD 回復部分資料是可行的，但仍希望這「最終手段」沒有被用上的時候。至於，Managed kubernetes 下要怎麼處理誤刪後的救援呢？這也許得再研究研究了。
+針對自建 Kubernetes 的情境，由 ETCD 回復部分資料是可行的，但仍希望這「最終手段」沒有被用上的時候。至於，Managed Kubernetes 下要怎麼處理誤刪後的救援呢？目前也許能只能向各大 cloud provider 許願，希望他們直接支援對應的回復功能。
