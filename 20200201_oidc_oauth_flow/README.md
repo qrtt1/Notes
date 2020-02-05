@@ -146,7 +146,7 @@
 
 ![](oauth_implict.png)
 
-[Implict flow 43:54](https://youtu.be/996OiexHze0?t=2634) 的流程跟先前的只有微小的不同，首先是 Response type 換成了 *token*，由於沒有 back channel 就不需要 Redirect URI，最後 Client 只有 front channel，向 Resource server 要資料的行為就改在 front channel 執行 (注意：先前的流程它是虛線，現在是實線的)。
+[Implict flow 43:54](https://youtu.be/996OiexHze0?t=2634) 的流程跟先前的只有微小的不同，首先是 Response type 換成了 token ，由於沒有 back channel 就不需要執行使用 Authorization code 向 Resource Server 交換 token 的流程 (主要是沒有後端能隱藏 Client Secret，因此不會採用這樣的流程)，最後 Client 只有 front channel，向 Resource server 要資料的行為就改在 front channel 執行 (注意：先前的流程它是虛線，現在是實線的)。
 
 ## OpenID Connect 
 
