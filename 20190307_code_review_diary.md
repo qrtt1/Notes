@@ -8,6 +8,12 @@
 * 程式本身有什麼問題？
 * 缺乏與自身經驗連結的範例
 
+----
+
+
+* 討論串：https://www.facebook.com/groups/1403852566495675/permalink/2562730467274540/
+* 主程式：https://github.com/SaviorDT/-/blob/master/src/frame/Main.java
+
 ## 對 GUI 實作的觀念
 
 * 常見的 Pattern 不一定要很早就學: MVC, MVVM, MVP
