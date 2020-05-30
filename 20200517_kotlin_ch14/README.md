@@ -5,6 +5,7 @@
 > Creating a Subclass
 
 * superclass, subclass
+* `:` operator
 * `open` keyword
 * `overriden` keyword
 * `final` keyword
