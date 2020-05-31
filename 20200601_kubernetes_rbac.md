@@ -1,12 +1,12 @@
-# Kubernetes rbac 入門筆記
+# Kubernetes RBAC 筆記
 
-當我們開發 Kubernetes 的應用程式或是打算在 Kubernetes pod 內呼叫 Kubernetes API (例如：使用 kubectl)，若沒有對權限做特殊的處理時，八成會遇到被系統阻擋的訊息。
+當我們開發 Kubernetes 的應用程式或是打算在 Kubernetes pod 內呼叫 Kubernetes API (例如：使用 kubectl)，若沒有對權限做特殊的處理時，會遇到系統阻擋訊息：
 
 ```
 Error: configmaps is forbidden: User "system:serviceaccount:kube-system:default" cannot list resource "configmaps" in API group "" in the namespace "kube-system"
 ```
 
-對於剛接觸 Kubernetes 的新手，還沒學會如何使用 Kubernetes rbac 的情境，可能有點不知所措常會卡關一陣子。莫驚慌、莫害怕！先記住主要症狀的關鍵字 `forbidden`。若你遇到它，那先研究 rbac 有沒有設定錯誤。
+對於剛接觸 Kubernetes 的新手，還沒學會如何使用 Kubernetes RBAC 的時期，可能有點不知所措而卡關了好一陣子。莫驚慌、莫害怕！先記住主要症狀的關鍵字 `forbidden`。若你遇到它，那先研究 rbac 有沒有設定錯誤。
 
 先由上面的 error message (這是我在網上搜尋後作為範例之用)，我們可以先簡單區分出：
 
@@ -65,7 +65,7 @@ rules:
   verbs: ["get", "watch", "list"]
 ```
 
-不管是 Role 或 ClusterRole 都代表了『權限』的集合，所以重點在 `rules`，rules 是一個 list，它可以設定多組的權限，最終這些權限會以被加總起來成為最後能使用的權限。(不支援減少權限的設定，所以要以最小權限去設定)
+不管是 Role 或 ClusterRole 都代表了『權限』的集合，所以重點在 `rules`，rules 是一個 list，它可以設定多組的權限，最終這些權限會以被加總起來成為最後能使用的權限。(不支援減少權限的設定，所以要保持最小權限設定的習慣)
 
 ## RoleBinding & ClusterRoleBinding
 
@@ -121,7 +121,7 @@ subjects:
   namespace: kube-system
 ```
 
-## 該怎麼做？
+## 實戰練習
 
 看完了官方文件導讀後，要如何與實際的情境結合呢？直接拿經典的 helm v2 來練習吧！因為 helm 在 Kubernetes 還沒支援 RBAC 時就開始開發，中間歷經了 RBAC 成為 Kubernetes Cluster 預設配置時期。在 Kubernetes 1.6 後才加入的使用者，可能會困惑為什麼 helm v2 的安裝前，要特別先設定 RBAC 呢？
 
@@ -156,7 +156,7 @@ Not sure what to do next? 😅  Check out https://kind.sigs.k8s.io/docs/user/qui
 這次，我們故意忘記要先設定 RBAC，直接初始化 helm：
 
 ```
-helm init --service-account tiller
+$ helm init --service-account tiller
 Creating /Users/qrtt1/.helm
 Creating /Users/qrtt1/.helm/repository
 Creating /Users/qrtt1/.helm/repository/cache
@@ -259,14 +259,9 @@ Error: configmaps is forbidden: User "system:serviceaccount:kube-system:tiller" 
 
 * resource name：configmaps
 * verb：list
-* apiGroups：看不出來
+* api group：""
 
-用 `api-resources` 查一下 api group，中間 (cm 到 true 之間) 是空的，那我們填空字串就行了
-
-```
-$ k api-resources |grep configmaps
-configmaps                        cm                                          true         ConfigMap
-```
+由上述蒐集的資訊，建立出對應的 ClusterRole 與 ClusterRoleBinding：
 
 ```yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -279,7 +274,6 @@ rules:
   verbs: ["list"] # 只加需要的 verb
 ```
 
-再加上 Binding：
 
 ```yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -296,14 +290,7 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
 ```
 
-再執行一次 ls 就成功了：
-
-```
-$ helm ls
-
-```
-
-但這只是做 list 的動作，我們沒有給任何寫入的權限。來試著裝新東西唄！
+再執行一次 ls 就成功了，但這只是做 list 的動作，我們沒有給任何寫入的權限。來試著裝新東西唄！
 
 ```
 $ helm ls
