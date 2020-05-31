@@ -25,6 +25,7 @@
 * 2019/01/27 [On Job Training 有感](20190127_OnJobTraining.md)
 * 2019/02/06 [The Little Go Book 閱讀筆記](20190206_golang/README.md)
 * 2019/12/29 [Restore Kubernetes Objects from ETCD](20191229_kube-apiserver-and-etcd.md)
+* 2020/06/01 [Kubernetes RBAC 筆記](20200601_kubernetes_rbac.md)
 
 ## 文章
 
