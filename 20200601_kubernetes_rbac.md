@@ -647,7 +647,7 @@ This Helm chart is deprecated
 看完了概念介紹與實戰練習後，RBAC 的使用有沒有很簡單呢？摘要一下重點：
 
 * 角色即權限 (Role, Clusterrole)
-* 行為者被賦予角色才有權力 (subjects: User, Role, ServiceAccount)
+* 行為者被賦予角色才有權力 (subjects: User, Group, ServiceAccount)
 * 透過 Binding 賦予角色 (RoleBinding, ClusterRoleBinding)
 
 在實戰中，只是看著 error message 內提到的 resource、api group 與 verb 來進行修補。我們只是這樣做來反覆完成 helm 所需要的權限。要提醒的事，如果你希望用 helm 來安裝符合總情境的 package，請用官方建議的 RBAC 設定呦！
