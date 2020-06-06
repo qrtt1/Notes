@@ -44,7 +44,9 @@ spec:
     rule: 'RunAsAny'
 ```
 
-它被命名為 `privileged`，顧名思義這是一個權限全開的例子。在我們學習 RBAC 獲得的概念是，即使在系統定義了這屬 Pod Security Policy 仍是沒有作用的，因為它還沒有被任何的 RoleBinding 與特定的 Subject 及 Role 關聯起來。
+它被命名為 `privileged`，顧名思義這是一個權限全開的例子。在我們學習 RBAC 獲得的概念是，即使在系統定義了這屬 Pod Security Policy 仍是沒有作用的，因為它還沒有被任何的 RoleBinding 與特定的 Subject 及 Role 關聯起來。在把它關聯起來前，我們還要定義一下 Role 宣示我們要授權 Subject 使用這組 Pod Security Policy，但要怎麼做呢？
+
+舉先前用過的 `pod-reader` 為例，權限設定需要 3 個參數：apiGroups、resources 與 verbs。對 Pod Security Policy 也是，只是它用了個特殊的 verb `use`：
 
 ```yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -58,7 +60,8 @@ rules:
   verbs: ["get", "watch", "list"]
 ```
 
-舉先前用過的 `pod-reader` 為例，權限設定需要 3 個參數：apiGroups、resources 與 verbs。對 Pod Security Policy 也是，只是它用了個特殊的 verb `use`：
+針對 `使用` Pod Security Policy 寫法上更為固定簡單，只有 `resourceNames` 是有變化的地方。與先前 RBAC 的差異就是 Policy 是自訂的，而不是使用系統內既有的 Resource。
+
 
 ```yaml
 - apiGroups: ['policy']
@@ -68,7 +71,7 @@ rules:
   - privileged
 ```
 
-寫法上更為固定簡單，只有 `resourceNames` 是有變化的地方。與先前 RBAC 的差異就是 Policy 是自訂的，而不是使用系統內既有的 Resource。
+
 
 
 
