@@ -362,7 +362,11 @@ local-path-storage   replicaset.apps/local-path-provisioner-7745554f7f   1      
 ```
 
 
+## 學習 Pod Security Policy
 
+先前，我們用設定最大權限偷懶法修好了 kind。這一回合，我們由最小權限開始，來啟動一個 Pod。
+
+(TBD)
 
 
 
