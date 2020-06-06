@@ -71,6 +71,56 @@ rules:
   - privileged
 ```
 
+上述就是對於 Pod Security Policy 的簡述。接著，我們透過實戰來認識各種 error messages。
+
+## 建立實作環境
+
+由於 `Pod Security Policy` 在預設的情況下並不會被啟用，為了準備一個能用來練習的環境。這功能得要求 kube-apiserver 的 `--enable-admission-plugins` 參數啟用它。
+
+(TBD 查詢參數的過程)
+
+```
+$ kind create cluster --config cfg.yaml
+Creating cluster "kind" ...
+ ✓ Ensuring node image (kindest/node:v1.17.0) 🖼
+ ✓ Preparing nodes 📦
+ ✓ Writing configuration 📜
+ ✓ Starting control-plane 🕹️
+ ✓ Installing CNI 🔌
+ ✓ Installing StorageClass 💾
+Set kubectl context to "kind-kind"
+You can now use your cluster with:
+
+kubectl cluster-info --context kind-kind
+
+Have a nice day! 👋
+```
+
+## 實作環境的現況
+
+```
+$ kubectl get all -A
+NAMESPACE     NAME                 TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)                  AGE
+default       service/kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP                  47s
+kube-system   service/kube-dns     ClusterIP   10.96.0.10   <none>        53/UDP,53/TCP,9153/TCP   45s
+
+NAMESPACE     NAME                        DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR                 AGE
+kube-system   daemonset.apps/kindnet      0         0         0       0            0           <none>                        43s
+kube-system   daemonset.apps/kube-proxy   0         0         0       0            0           beta.kubernetes.io/os=linux   45s
+
+NAMESPACE            NAME                                     READY   UP-TO-DATE   AVAILABLE   AGE
+kube-system          deployment.apps/coredns                  0/2     0            0           45s
+local-path-storage   deployment.apps/local-path-provisioner   0/1     0            0           42s
+
+NAMESPACE            NAME                                                DESIRED   CURRENT   READY   AGE
+kube-system          replicaset.apps/coredns-6955765f44                  2         0         0       30s
+local-path-storage   replicaset.apps/local-path-provisioner-7745554f7f   1         0         0       30s
+```
+
+啟後 Kubernetes 後，我們先觀察一下整體的狀態，會發現整組壞光光：DaemonSet 與 Deployment 都無法正常啟動。未看先猜，他們被 Pod Security Policy 給阻擋了。
+
+
+## ...
 
 
 
@@ -138,41 +188,5 @@ kubeadmConfigPatches:
         enable-admission-plugins: "NamespaceLifecycle,LimitRanger,ServiceAccount,TaintNodesByCondition,Priority,DefaultTolerationSeconds,DefaultStorageClass,StorageObjectInUseProtection,PersistentVolumeClaimResize,MutatingAdmissionWebhook,ValidatingAdmissionWebhook,RuntimeClass,ResourceQuota,PodSecurityPolicy"
 ```
 
-```
-(base) ($ |N/A:default)➜  lab kind create cluster --config cfg.yaml
-Creating cluster "kind" ...
- ✓ Ensuring node image (kindest/node:v1.17.0) 🖼
- ✓ Preparing nodes 📦
- ✓ Writing configuration 📜
- ✓ Starting control-plane 🕹️
- ✓ Installing CNI 🔌
- ✓ Installing StorageClass 💾
-Set kubectl context to "kind-kind"
-You can now use your cluster with:
-
-kubectl cluster-info --context kind-kind
-
-Have a nice day! 👋
-```
-
-```
-(base) ($ |kind-kind:default)➜  lab k get all -A
-NAMESPACE     NAME                 TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)                  AGE
-default       service/kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP                  47s
-kube-system   service/kube-dns     ClusterIP   10.96.0.10   <none>        53/UDP,53/TCP,9153/TCP   45s
-
-NAMESPACE     NAME                        DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR                 AGE
-kube-system   daemonset.apps/kindnet      0         0         0       0            0           <none>                        43s
-kube-system   daemonset.apps/kube-proxy   0         0         0       0            0           beta.kubernetes.io/os=linux   45s
-
-NAMESPACE            NAME                                     READY   UP-TO-DATE   AVAILABLE   AGE
-kube-system          deployment.apps/coredns                  0/2     0            0           45s
-local-path-storage   deployment.apps/local-path-provisioner   0/1     0            0           42s
-
-NAMESPACE            NAME                                                DESIRED   CURRENT   READY   AGE
-kube-system          replicaset.apps/coredns-6955765f44                  2         0         0       30s
-local-path-storage   replicaset.apps/local-path-provisioner-7745554f7f   1         0         0       30s
-(base) ($ |kind-kind:default)➜  lab
-```
 
 
