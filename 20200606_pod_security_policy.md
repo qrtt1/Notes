@@ -79,6 +79,26 @@ rules:
 
 (TBD 查詢參數的過程)
 
+
+```yaml
+kind: Cluster
+apiVersion: kind.sigs.k8s.io/v1alpha3
+nodes:
+  - role: control-plane
+kubeadmConfigPatches:
+  - |
+    # v1beta2 only works for 1.15+
+    apiVersion: kubeadm.k8s.io/v1beta2
+    kind: ClusterConfiguration
+    metadata:
+      name: config
+    apiServer:
+      extraArgs:
+        enable-admission-plugins: "NamespaceLifecycle,LimitRanger,ServiceAccount,TaintNodesByCondition,Priority,DefaultTolerationSeconds,DefaultStorageClass,StorageObjectInUseProtection,PersistentVolumeClaimResize,MutatingAdmissionWebhook,ValidatingAdmissionWebhook,RuntimeClass,ResourceQuota,PodSecurityPolicy"
+```
+
+利用準備好的設定檔建出 Kubernetes Cluster：
+
 ```
 $ kind create cluster --config cfg.yaml
 Creating cluster "kind" ...
@@ -169,24 +189,6 @@ status:
 
 ## 實戰 
 
-
-
-```yaml
-kind: Cluster
-apiVersion: kind.sigs.k8s.io/v1alpha3
-nodes:
-  - role: control-plane
-kubeadmConfigPatches:
-  - |
-    # v1beta2 only works for 1.15+
-    apiVersion: kubeadm.k8s.io/v1beta2
-    kind: ClusterConfiguration
-    metadata:
-      name: config
-    apiServer:
-      extraArgs:
-        enable-admission-plugins: "NamespaceLifecycle,LimitRanger,ServiceAccount,TaintNodesByCondition,Priority,DefaultTolerationSeconds,DefaultStorageClass,StorageObjectInUseProtection,PersistentVolumeClaimResize,MutatingAdmissionWebhook,ValidatingAdmissionWebhook,RuntimeClass,ResourceQuota,PodSecurityPolicy"
-```
 
 
 
