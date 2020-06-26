@@ -73,8 +73,8 @@ private val featureRegistryKey = AttributeKey<Attributes>("ApplicationFeatureReg
 ```
 
 ```kotlin
-    val registry = attributes.computeIfAbsent(featureRegistryKey) { Attributes(true) }
-    val installedFeature = registry.getOrNull(feature.key)
+val registry = attributes.computeIfAbsent(featureRegistryKey) { Attributes(true) }
+val installedFeature = registry.getOrNull(feature.key)
 ```
 
 Attributes 與 AttributeKey 相當易讀，我們就不帶著大家追入，直接感受它的語意就行了。看到「屬性 Attribute」，按常理它會有名稱與他的值。以 Java 來實作的話，大一致上會使用 Map 語意。因此，他實作分為二種，一種是需要併行處理 (concurrent) 的情況，另一種則是不需要併行處理的情況，對應的實作類別就會對上 ConcurrentHashMap 與 HashMap。
@@ -109,10 +109,10 @@ try {
 
 * Feature 類別會在多個 thread 共用，所以必需以 thread-safe 的目實來實作。(強烈推薦設計成 immutable 物件避免發生非預期的副作用)
 * 提供 Configuration 類別來放置 install 時要設定的參數，只有這部分的設計提供變更參數。
-* 提供 compansion object 實作介面 ApplicationFeature (雖然沒硬性規定，但此 compansion object 命名為 Feature 是慣例)
+* 提供 companion object 實作介面 ApplicationFeature (雖然沒硬性規定，但此 companion object 命名為 Feature 是慣例)
 * 透過 pipeline.intercept 參與 pipeline 的流程
 
-以 DefaultHeaders Feature 為例，它的 compansion object 實作為：
+以 DefaultHeaders Feature 為例，它的 companion object 實作為：
 
 ```kotlin
 companion object Feature : ApplicationFeature<Application, Configuration, DefaultHeaders> {
@@ -185,6 +185,6 @@ override fun install(pipeline: Application, configure: Configuration.() -> Unit)
 
 ## 語法摘要 
 
-在這一次的 Code Trace 流程中，我們複習 compansion object 的用法，透過它讓我們能替一個類別，建立預先存在的物件，透過它來替外圍的物件初始化，這也是為什麼 CustomFeature 內會有個 compansion object Feature。
+在這一次的 Code Trace 流程中，我們複習 companion object 的用法，透過它讓我們能替一個類別，建立預先存在的物件，透過它來替外圍的物件初始化，這也是為什麼 CustomFeature 內會有個 companion object Feature。
 
 同時，也見識到了 interface 代表的「合約」精神，背後的具體實作是誰並不重要，而是它承擔了合約 (ApplicationFeature) 內載明的事項，提供了 Key 與 install 函式。
