@@ -159,9 +159,11 @@ interface ApplicationCall {
 ```kotlin
 // 不管怎麼樣，我們都需要 ApplicationCallPipeline，那就直接把它的實體建立出來
 val pipeline = ApplicationCallPipeline()
+```
 
-// 呼叫 execute 時，需要有 ApplicationCall 物件，但它是個 interface，[暱名類別的物件實體 (an object of an anonymous class )](https://kotlinlang.org/docs/reference/object-declarations.html)：
+呼叫 execute 時，需要有 ApplicationCall 物件，但它是個 interface，我們直接將它建立為[暱名類別的物件實體 (an object of an anonymous class )](https://kotlinlang.org/docs/reference/object-declarations.html)：
 
+```
 // (在呼叫前，應該要有一些 interceptor 安裝好)
 
 // 實作都先留白就行了：
