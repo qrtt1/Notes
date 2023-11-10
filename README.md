@@ -34,6 +34,10 @@
 * 2023/01/27 [Database 的 Index 是什麼？](20230127_Database_的_Index_是什麼？/README.md)
 * 2023/01/28 [使用 chroot 簡單隔離](20230128_使用_chroot_簡單隔離/README.md)
 * 2023/02/03 [跟著 Discord 官方教學啟動範例程式](20230203_跟著_Discord_官方教學啟動範例程式/README.md)
+* 2023/02/05 [Discord 基礎範例調查兵團 [1]](20230205_Discord_基礎範例調查兵團_[1]/README.md)
+* 2023/02/06 [Discord 基礎範例調查兵團 [2]](20230206_Discord_基礎範例調查兵團_[2]/README.md)
+* 2023/02/07 [Discord 基礎範例調查兵團 [3]](20230207_Discord_基礎範例調查兵團_[3]/README.md)
+* 2023/02/19 [也來讀讀 Open Source 函式庫怎麼實作 Discord Gateway 的部分](20230219_也來讀讀_Open_Source_函式庫怎麼實作_Discord_Gateway_的部分/README.md)
 
 
 ## 文章
