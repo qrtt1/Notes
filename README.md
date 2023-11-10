@@ -30,8 +30,10 @@
 * 2022/12/17 [學習程式語言也順便學習 Python (cs61a)](20221217_學習程式語言也順便學習_Python_(cs61a)/README.md)
 * 2022/12/21 [骰子街 C++ 編譯問題](20221221_骰子街_C++_編譯問題/README.md)
 * 2022/12/25 [DrogonTest 準備好上戰場了嗎？](20221225_DrogonTest_準備好上戰場了嗎？/README.md)
+* 2023/01/03 [Conda 與多版本 Python](20230103_Conda_與多版本_Python/README.md)
+* 2023/01/27 [Database 的 Index 是什麼？](20230127_Database_的_Index_是什麼？/README.md)
+* 2023/01/28 [使用 chroot 簡單隔離](20230128_使用_chroot_簡單隔離/README.md)
 * 2023/02/03 [跟著 Discord 官方教學啟動範例程式](20230203_跟著_Discord_官方教學啟動範例程式/README.md)
-
 
 
 ## 文章
