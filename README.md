@@ -41,6 +41,14 @@
 * 2023/02/28 [跟 ChatGPT 一起 Pair Programming](20230228_跟_ChatGPT_一起_Pair_Programming/README.md)
 * 2023/03/08 [TWJUG-LITE 26 TDD Workshop](20230308_TWJUG-LITE_26_TDD_Workshop/README.md)
 * 2023/03/29 [2023 Q1 產出盤點](20230329_2023_Q1_產出盤點/README.md)
+* 2023/04/16 [來場輕便可攜的 Event Storming 吧！](20230416_來場輕便可攜的_Event_Storming_吧！/README.md)
+* 2023/04/14 [Practice Stack 導覽](20230414_Practice_Stack_導覽/README.md)
+* 2023/05/28 [女巫的佳釀初回 ATDD 內容回顧](20230528_女巫的佳釀初回_ATDD_內容回顧/README.md)
+* 2023/06/03 [由 Walking Skeleton 到 Iteration 0](20230603_由_Walking_Skeleton_到_Iteration_0/README.md)
+* 2023/06/06 [Recap [三國殺] 練習 ATDD/TDD 基本流程](20230606_Recap_[三國殺]_練習_ATDD/TDD_基本流程/README.md)
+* 2023/06/09 [OOA 結構化分析怎麼做 (極簡版)](20230609_OOA_結構化分析怎麼做_(極簡版)/README.md)
+* 2023/06/20 [遊戲微服務的 GitHub Actions 入門](20230620_遊戲微服務的_GitHub_Actions_入門/README.md)
+* 2023/06/28 [學習者的輸入與輸出測試](20230628_學習者的輸入與輸出測試/README.md)
 
 ## 文章
 
