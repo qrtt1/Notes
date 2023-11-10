@@ -38,7 +38,9 @@
 * 2023/02/06 [Discord 基礎範例調查兵團 [2]](20230206_Discord_基礎範例調查兵團_[2]/README.md)
 * 2023/02/07 [Discord 基礎範例調查兵團 [3]](20230207_Discord_基礎範例調查兵團_[3]/README.md)
 * 2023/02/19 [也來讀讀 Open Source 函式庫怎麼實作 Discord Gateway 的部分](20230219_也來讀讀_Open_Source_函式庫怎麼實作_Discord_Gateway_的部分/README.md)
-
+* 2023/02/28 [跟 ChatGPT 一起 Pair Programming](20230228_跟_ChatGPT_一起_Pair_Programming/README.md)
+* 2023/03/08 [TWJUG-LITE 26 TDD Workshop](20230308_TWJUG-LITE_26_TDD_Workshop/README.md)
+* 2023/03/29 [2023 Q1 產出盤點](20230329_2023_Q1_產出盤點/README.md)
 
 ## 文章
 
