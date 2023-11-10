@@ -27,6 +27,7 @@
 * 2019/12/29 [Restore Kubernetes Objects from ETCD](20191229_kube-apiserver-and-etcd.md)
 * 2020/06/01 [Kubernetes RBAC 筆記](20200601_kubernetes_rbac.md)
 * 2022/12/11 [[筆記] 物件導向分析](20221211_[筆記]_物件導向分析/README.md)
+* 2022/12/17 [學習程式語言也順便學習 Python (cs61a)](20221217_學習程式語言也順便學習_Python_(cs61a)/README.md)
 * 2023/02/03 [跟著 Discord 官方教學啟動範例程式](20230203_跟著_Discord_官方教學啟動範例程式/README.md)
 
 ## 文章
