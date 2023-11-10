@@ -43,7 +43,7 @@ PUBLIC_KEY=<YOUR_PUBLIC_KEY>
 
 進入 Developer Portal 後 (也許你要先啟用開發者模式)，會有個 `New Application` 可以建立新的 Discord Application：
 
-![](20230203_跟著_Discord_官方教學啟動範例程式/images/3ah8CeA.png)
+![](images/3ah8CeA.png)
 
 建立完成後，它會自動導入 General Information 頁，你就能獲得：
 
@@ -52,15 +52,15 @@ PUBLIC_KEY=<YOUR_PUBLIC_KEY>
 
 這些是機敏資料，請保持它不讓其他人知道 (在文件釋出的同時，此 Application 已刪除)：
 
-![](20230203_跟著_Discord_官方教學啟動範例程式/images/Gps8HyY.png)
+![](images/Gps8HyY.png)
 
 再來，點開 Bot 頁籤，我們需要有一個 Bot User 才行，因為 `.env` 內的 DISCORD_TOKEN 就是 Bot User 的 Token。在新的 Application 內的 Bot 頁面如下，點選 `Add Bot` 建立你的 Bot User：
 
-![](20230203_跟著_Discord_官方教學啟動範例程式/images/Y486cjR.png)
+![](images/Y486cjR.png)
 
 建出 Bot User 後，按下 `Reset Token` 獲得新的 Token (它只有產生時會顯示，沒有其它方式查詢，請妥善保存。遺失時，就只能重生囉)：
 
-![](20230203_跟著_Discord_官方教學啟動範例程式/images/50NzjRr.png)
+![](images/50NzjRr.png)
 
 經過上述流程後，除了 `GUILD_ID` 都填上了，而 GUILD 在手冊中的說明是：channels 與 users 的集合，換句話說也就是一個 Discord Server。因此，他的文件說明是，你找出你打算安裝 Application 的 Discord Server URL：
 
@@ -80,7 +80,7 @@ node app.js
 
 或在 IDE 中啟動 `app.js` 來啟動 Discord Application：
 
-![](20230203_跟著_Discord_官方教學啟動範例程式/images/Gteofxm.png)
+![](images/Gteofxm.png)
 
 由於，我們並沒有真的完成範例程式中的「安裝說明」部分，會有錯誤是正常的。流程中，我們故意留下這個未完成的部分，為了要認識這個常見的錯誤訊息：
 
@@ -103,11 +103,11 @@ Error: {"message":"Missing Access","code":50001}
 
 請先回到教學文件，查閱一下 [Adding scopes and permissions](https://discord.com/developers/docs/getting-started#adding-scopes-and-permissions) 的內容：
 
-![](20230203_跟著_Discord_官方教學啟動範例程式/images/Y9wSIpk.png)
+![](images/Y9wSIpk.png)
 
 它說要使用 `OAuth2` 內的 `URL generator` 來設定權限，也有說明要指定的權限內容，勾選的參考畫面如下：
 
-![](20230203_跟著_Discord_官方教學啟動範例程式/images/BLfL7b7.png)
+![](images/BLfL7b7.png)
 
 選完後，在最下方會出現一個 URL：
 
@@ -126,7 +126,7 @@ https://discord.com/api/oauth2/authorize?client_id=1070977204504244285&permissio
 
 這個範例程式，有提供與使用者互動的功能。為了達到這個功能，我們使用的範例程式是一個簡單的 Web Application，它會開一個 HTTP Server 並等得 Discord 的互動。如果你還記得先前提到的 `General Information`，它正好是設定 interactions url 的地方：
 
-![](20230203_跟著_Discord_官方教學啟動範例程式/images/4hRrf5m.png)
+![](images/4hRrf5m.png)
 
 問題來了，如果要能 Discord 能夠訪問我們的 HTTP Server，那就得準備一個可以公開存取的網址。為了達到這個目的，文件上提供二個建議：
 
@@ -166,14 +166,14 @@ https://71ff-118-160-147-135.jp.ngrok.io
 
 如果你想問為什麼是 `/interactions` ？因為，程式就是這麼寫的：
 
-![](20230203_跟著_Discord_官方教學啟動範例程式/images/6500lOQ.png)
+![](images/6500lOQ.png)
 
 ## 打完收工
 
 一切就續後，程式就可以使用囉：
 
-![](20230203_跟著_Discord_官方教學啟動範例程式/images/9mtBh77.png)
+![](images/9mtBh77.png)
 
-![](20230203_跟著_Discord_官方教學啟動範例程式/images/0cGemKN.png)
+![](images/0cGemKN.png)
 
 這篇簡短的筆記，記錄了依著官文教學啟動 Discord Application 的步驟，再補上一些自己覺得需要的小細節。我們樸實地走完了 `Hello World` 的安裝，作為開始學習開始 Discord Application 的起點。
