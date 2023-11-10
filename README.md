@@ -26,6 +26,7 @@
 * 2019/02/06 [The Little Go Book 閱讀筆記](20190206_golang/README.md)
 * 2019/12/29 [Restore Kubernetes Objects from ETCD](20191229_kube-apiserver-and-etcd.md)
 * 2020/06/01 [Kubernetes RBAC 筆記](20200601_kubernetes_rbac.md)
+* 2022/12/11 [[筆記] 物件導向分析](20221211_[筆記]_物件導向分析/README.md)
 * 2023/02/03 [跟著 Discord 官方教學啟動範例程式](20230203_跟著_Discord_官方教學啟動範例程式/README.md)
 
 ## 文章
