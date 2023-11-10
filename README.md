@@ -26,6 +26,13 @@
 * 2019/02/06 [The Little Go Book 閱讀筆記](20190206_golang/README.md)
 * 2019/12/29 [Restore Kubernetes Objects from ETCD](20191229_kube-apiserver-and-etcd.md)
 * 2020/06/01 [Kubernetes RBAC 筆記](20200601_kubernetes_rbac.md)
+* 2023/03/08 [TWJUG-LITE 26 TDD Workshop](20230308_TWJUG-LITE_26_TDD_Workshop/README.md)
+* 2023/06/28 [學習者的輸入與輸出測試](20230628_學習者的輸入與輸出測試/README.md)
+
+### 水球軟體學院相關的筆記
+
+> 多為參與遊戲微服務計畫時的副產品
+
 * 2022/12/11 [[筆記] 物件導向分析](20221211_[筆記]_物件導向分析/README.md)
 * 2022/12/17 [學習程式語言也順便學習 Python (cs61a)](20221217_學習程式語言也順便學習_Python_(cs61a)/README.md)
 * 2022/12/21 [骰子街 C++ 編譯問題](20221221_骰子街_C++_編譯問題/README.md)
@@ -39,8 +46,6 @@
 * 2023/02/07 [Discord 基礎範例調查兵團 [3]](20230207_Discord_基礎範例調查兵團_[3]/README.md)
 * 2023/02/19 [也來讀讀 Open Source 函式庫怎麼實作 Discord Gateway 的部分](20230219_也來讀讀_Open_Source_函式庫怎麼實作_Discord_Gateway_的部分/README.md)
 * 2023/02/28 [跟 ChatGPT 一起 Pair Programming](20230228_跟_ChatGPT_一起_Pair_Programming/README.md)
-* 2023/03/08 [TWJUG-LITE 26 TDD Workshop](20230308_TWJUG-LITE_26_TDD_Workshop/README.md)
-* 2023/03/29 [2023 Q1 產出盤點](20230329_2023_Q1_產出盤點/README.md)
 * 2023/04/16 [來場輕便可攜的 Event Storming 吧！](20230416_來場輕便可攜的_Event_Storming_吧！/README.md)
 * 2023/04/14 [Practice Stack 導覽](20230414_Practice_Stack_導覽/README.md)
 * 2023/05/28 [女巫的佳釀初回 ATDD 內容回顧](20230528_女巫的佳釀初回_ATDD_內容回顧/README.md)
@@ -48,7 +53,6 @@
 * 2023/06/06 [Recap [三國殺] 練習 ATDD/TDD 基本流程](20230606_Recap_[三國殺]_練習_ATDD/TDD_基本流程/README.md)
 * 2023/06/09 [OOA 結構化分析怎麼做 (極簡版)](20230609_OOA_結構化分析怎麼做_(極簡版)/README.md)
 * 2023/06/20 [遊戲微服務的 GitHub Actions 入門](20230620_遊戲微服務的_GitHub_Actions_入門/README.md)
-* 2023/06/28 [學習者的輸入與輸出測試](20230628_學習者的輸入與輸出測試/README.md)
 * 2023/07/02 [Python 開發環境準備](20230702_Python_開發環境準備/README.md)
 * 2023/07/08 [出包魔法師 6b62e9cb](20230708_出包魔法師_6b62e9cb/README.md)
 
