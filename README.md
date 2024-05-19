@@ -28,6 +28,8 @@
 * 2020/06/01 [Kubernetes RBAC 筆記](20200601_kubernetes_rbac.md)
 * 2023/03/08 [TWJUG-LITE 26 TDD Workshop](20230308_TWJUG-LITE_26_TDD_Workshop/README.md)
 * 2023/06/28 [學習者的輸入與輸出測試](20230628_學習者的輸入與輸出測試/README.md)
+* 2023/07/14 [Reading and modifying the source code of the dbt adapter](20230714_Reading_and_modifying_the_source_code_of_the_dbt_adapter/README.md)
+* 2024/05/19 [20240519_Prometheus_雜記](20240519_Prometheus_雜記/README.md)
 
 ### 水球軟體學院相關的筆記
 
